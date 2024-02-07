@@ -252,4 +252,4 @@ void ili9xxx_post_cb_isr(spi_transaction_t *trans);
 
 void ili9xxx_flush(void *disp_drv, const void *area, void *color_p);
 
-
+// void sh8601_flush(void *disp_drv, const void *area, void *color_p);
