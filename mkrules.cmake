@@ -132,7 +132,7 @@ function(all_lv_bindings)
             OUTPUT
                 ${LV_ESPIDF}
             INPUT
-                ${LV_BINDINGS_DIR}/driver/esp32/espidf.h ${LV_BINDINGS_DIR}/driver/esp32/sh8601_qspi.h ${LV_BINDINGS_DIR}/driver/esp32/Bus_QSPI.h
+                ${LV_BINDINGS_DIR}/driver/esp32/espidf.h ${LV_BINDINGS_DIR}/driver/esp32/sh8601_qspi.h
             DEPENDS
                 ${LV_ESPIDF_HEADERS}
             GEN_OPTIONS
@@ -167,6 +167,7 @@ set(LV_SRC
 if(ESP_PLATFORM)
     LIST(APPEND LV_SRC
         ${LV_BINDINGS_DIR}/driver/esp32/espidf.c
+        ${LV_BINDINGS_DIR}/driver/esp32/Bus_QSPI.c
         ${LV_BINDINGS_DIR}/driver/esp32/sh8601_qspi.c
         ${LV_BINDINGS_DIR}/driver/esp32/modrtch.c
         ${LV_BINDINGS_DIR}/driver/esp32/sh2lib.c
