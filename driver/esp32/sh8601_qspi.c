@@ -10,6 +10,7 @@
 #include "esp_system.h"
 #include "soc/cpu.h"
 
+#include <esp_log.h>
 #include "sh8601_qspi.h"
 
 #include "lvgl/lvgl.h"
@@ -30,6 +31,16 @@ typedef struct {
 DMA_ATTR static uint8_t dma_buf[4] = {0};
 DMA_ATTR static spi_transaction_t spi_trans = {0};
 
+
+void sh8601_init(void *_disp_drv)
+{
+    lv_display_t *disp_drv = _disp_drv;
+    void *driver_data = lv_display_get_driver_data(disp_drv);
+    int cs = mp_obj_get_int(mp_obj_dict_get(driver_data, MP_OBJ_NEW_QSTR(MP_QSTR_cs)));
+    ESP_LOGI("sh8601_qspi", "sh8601_init(): cs=%d", cs);
+    mp_printf(&mp_plat_print, "sh8601_init(): cs=%d\n", cs);
+    // mp_plat_print()
+}
 
 void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p)
 {
@@ -88,10 +99,10 @@ void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p)
     size_t size = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);
     uint8_t color_size = 2;
 
-    bool swap_rgb565_bytes = mp_obj_get_int(mp_obj_dict_get(driver_data, MP_OBJ_NEW_QSTR(MP_QSTR_swap_rgb565_bytes)));
-    if ( swap_rgb565_bytes == true ) {
-        lv_draw_sw_rgb565_swap(color_p, size);
-    }
+    // bool swap_rgb565_bytes = mp_obj_get_int(mp_obj_dict_get(driver_data, MP_OBJ_NEW_QSTR(MP_QSTR_swap_rgb565_bytes)));
+    // if ( swap_rgb565_bytes == true ) {
+    //     lv_draw_sw_rgb565_swap(color_p, size);
+    // }
 
     if ( dt == DISPLAY_TYPE_ILI9488 ) {
         color_size = 3;

@@ -168,6 +168,7 @@ if(ESP_PLATFORM)
     LIST(APPEND LV_SRC
         ${LV_BINDINGS_DIR}/driver/esp32/espidf.c
         ${LV_BINDINGS_DIR}/driver/esp32/Bus_QSPI.c
+        ${LV_BINDINGS_DIR}/driver/esp32/Panel_SH8601Z.c
         ${LV_BINDINGS_DIR}/driver/esp32/sh8601_qspi.c
         ${LV_BINDINGS_DIR}/driver/esp32/modrtch.c
         ${LV_BINDINGS_DIR}/driver/esp32/sh2lib.c
