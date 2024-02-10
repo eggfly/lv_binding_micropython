@@ -132,7 +132,7 @@ function(all_lv_bindings)
             OUTPUT
                 ${LV_ESPIDF}
             INPUT
-                ${LV_BINDINGS_DIR}/driver/esp32/espidf.h
+                ${LV_BINDINGS_DIR}/driver/esp32/espidf.h ${LV_BINDINGS_DIR}/driver/esp32/py_sh8601.h
             DEPENDS
                 ${LV_ESPIDF_HEADERS}
             GEN_OPTIONS
@@ -165,7 +165,10 @@ set(LV_SRC
 )
 
 if(ESP_PLATFORM)
-    LIST(APPEND LV_SRC
+    file(GLOB_RECURSE LGFX_SRCS ${LV_BINDINGS_DIR}/driver/esp32/lgfx/*.cpp)
+    LIST(APPEND LV_SRC ${LGFX_SRCS}
+        ${LV_BINDINGS_DIR}/driver/esp32/sh8601.cpp
+        ${LV_BINDINGS_DIR}/driver/esp32/py_sh8601.cpp
         ${LV_BINDINGS_DIR}/driver/esp32/espidf.c
         ${LV_BINDINGS_DIR}/driver/esp32/modrtch.c
         ${LV_BINDINGS_DIR}/driver/esp32/sh2lib.c
