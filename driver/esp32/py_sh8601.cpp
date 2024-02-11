@@ -29,6 +29,13 @@ static inline void *heap_alloc_psram(size_t length) {
                           MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 }
 
+void sh8601_brightness(uint8_t brightness) {
+  disp->setBrightness(brightness);
+  mp_printf(&mp_plat_print, "sh8601_brightness(%d)\n", brightness);
+}
+
+#define SH8601_INIT_TEST_FLUSH 0
+
 void sh8601_init() {
   mp_printf(&mp_plat_print, "sh8601_init() called.\n");
   if (!disp) {
@@ -39,9 +46,10 @@ void sh8601_init() {
     disp->setColorDepth(16);
     mp_printf(&mp_plat_print, "sh8601_init() after disp->setColorDepth().\n");
   }
-  disp->setBrightness(200);
+  disp->setBrightness(128);
   mp_printf(&mp_plat_print, "sh8601_init() after disp->setBrightness().\n");
 
+#if SH8601_INIT_TEST_FLUSH
   // flush
   uint32_t x1 = 1;
   uint32_t x2 = 256;
@@ -71,19 +79,28 @@ void sh8601_init() {
   } else {
     mp_printf(&mp_plat_print, "sh8601_init() not free(p)\n");
   }
+#endif // SH8601_INIT_TEST_FLUSH
   mp_printf(&mp_plat_print, "sh8601_init() free_size=%d\n",
             esp_get_free_heap_size());
   mp_printf(&mp_plat_print, "sh8601_init() after disp->pushPixels().\n");
 }
 
-void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p) {
-  mp_printf(&mp_plat_print, "sh8601_flush() START free_size=%d\n",
-            esp_get_free_heap_size());
+static inline unsigned long millis(void) {
+  return (unsigned long)(esp_timer_get_time() / 1000ULL);
+}
+static inline unsigned long micros(void) {
+  return (unsigned long)(esp_timer_get_time());
+}
 
+#define SH8601_FLUSH_DEBUG 0
+
+void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p) {
+  unsigned long start = micros();
+#if SH8601_FLUSH_DEBUG
+  mp_printf(&mp_plat_print, "flush() START free_size=%d\n",
+            esp_get_free_heap_size());
+#endif
   lv_display_t *disp_drv = (lv_display_t *)_disp_drv;
-  // TODO: PSRAM Not OK..
-  void *psram = heap_alloc_psram(512 * 1024);
-  mp_printf(&mp_plat_print, "sh8601_flush() allocpsram p=%x\n", psram);
   const lv_area_t *area = (const lv_area_t *)_area;
   lv_color_t *color_p = (lv_color_t *)_color_p;
 
@@ -101,33 +118,31 @@ void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p) {
 
   size_t size = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);
   // uint8_t color_size = 2;
-
-  mp_printf(&mp_plat_print,
-            "sh8601_flush() x1=%d,x2=%d,y1=%d,y2=%d,w=%d,h=%d,size=%d\n", x1,
-            x2, y1, y2, w, h, size);
-
   bool swap_rgb565_bytes = mp_obj_get_int(
       mp_obj_dict_get(driver_data, MP_OBJ_NEW_QSTR(MP_QSTR_swap_rgb565_bytes)));
-  mp_printf(&mp_plat_print, "sh8601_flush() swap_rgb565_bytes=%d\n",
+#if SH8601_FLUSH_DEBUG
+  mp_printf(&mp_plat_print,
+            "flush() x1=%d,x2=%d,y1=%d,y2=%d,w=%d,h=%d,size=%d\n", x1, x2, y1,
+            y2, w, h, size);
+  mp_printf(&mp_plat_print, "flush() swap_rgb565_bytes=%d\n",
             swap_rgb565_bytes);
+#endif
   if (swap_rgb565_bytes) {
     lv_draw_sw_rgb565_swap(color_p, size);
-    mp_printf(&mp_plat_print,
-              "sh8601_flush() lv_draw_sw_rgb565_swap() done.\n");
   }
 
   disp->startWrite();
   disp->setWindow(x1, y1, x2, y2);
   uint16_t *data = (uint16_t *)color_p;
-  disp->pushPixels(data, w * h, true);
-  // _disp->pushPixelsDMA()
+  // disp->pushPixels(data, w * h, true);
+  disp->pushPixelsDMA(data, w * h, true);
   disp->endWrite();
 
   // IMPORTANT!!!
   // Inform the graphics library that you are ready with the flushing.
   lv_disp_flush_ready(disp_drv);
-  mp_printf(&mp_plat_print, "sh8601_flush() 2 free_size=%d\n",
-            esp_get_free_heap_size());
-  mp_printf(&mp_plat_print, "sh8601_flush() done.\n");
+
+  unsigned long cost = micros() - start;
+  mp_printf(&mp_plat_print, "flush() cost %lu us.\n", cost);
 }
 }

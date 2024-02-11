@@ -755,7 +755,9 @@ extern void mp_lv_init_gc();
 #define LV_USE_SNAPSHOT 1
 
 /*1: Enable system monitor component*/
+#ifndef LV_USE_SYSMON
 #define LV_USE_SYSMON   0
+#endif
 
 #if LV_USE_SYSMON
     /*Get the idle percentage. E.g. uint32_t my_get_idle(void);*/
@@ -763,7 +765,9 @@ extern void mp_lv_init_gc();
 
     /*1: Show CPU usage and FPS count
      * Requires `LV_USE_SYSMON = 1`*/
+    #ifndef LV_USE_PERF_MONITOR
     #define LV_USE_PERF_MONITOR 0
+    #endif
     #if LV_USE_PERF_MONITOR
         #define LV_USE_PERF_MONITOR_POS LV_ALIGN_BOTTOM_RIGHT
 
@@ -774,7 +778,9 @@ extern void mp_lv_init_gc();
     /*1: Show the used memory and the memory fragmentation
      * Requires `LV_USE_BUILTIN_MALLOC = 1`
      * Requires `LV_USE_SYSMON = 1`*/
+    #ifndef LV_USE_MEM_MONITOR
     #define LV_USE_MEM_MONITOR 0
+    #endif
     #if LV_USE_MEM_MONITOR
         #define LV_USE_MEM_MONITOR_POS LV_ALIGN_BOTTOM_LEFT
     #endif
