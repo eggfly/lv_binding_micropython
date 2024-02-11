@@ -17,7 +17,10 @@ Contributors:
 /----------------------------------------------------------------------------*/
 #pragma once
 
+// for micropython qstr preprocessor
+#ifndef ESP_PLATFORM
 #define ESP_PLATFORM
+#endif
 
 #if defined (ESP_PLATFORM)
 
