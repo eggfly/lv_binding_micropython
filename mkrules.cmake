@@ -166,7 +166,9 @@ set(LV_SRC
 
 if(ESP_PLATFORM)
     file(GLOB_RECURSE LGFX_SRCS ${LV_BINDINGS_DIR}/driver/esp32/lgfx/*.cpp)
+    # file(GLOB_RECURSE MONICA_SRCS ${LV_BINDINGS_DIR}/driver/esp32/monica/*.cpp)
     LIST(APPEND LV_SRC ${LGFX_SRCS}
+        ${LV_BINDINGS_DIR}/driver/esp32/monica/disp/hal_disp.hpp
         ${LV_BINDINGS_DIR}/driver/esp32/sh8601.cpp
         ${LV_BINDINGS_DIR}/driver/esp32/py_sh8601.cpp
         ${LV_BINDINGS_DIR}/driver/esp32/espidf.c
