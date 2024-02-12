@@ -95,7 +95,7 @@ static inline unsigned long micros(void) {
 #define SH8601_FLUSH_DEBUG 0
 
 void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p) {
-  unsigned long start = micros();
+  // unsigned long start = micros();
 #if SH8601_FLUSH_DEBUG
   mp_printf(&mp_plat_print, "flush() START free_size=%d\n",
             esp_get_free_heap_size());
@@ -142,7 +142,7 @@ void sh8601_flush(void *_disp_drv, const void *_area, void *_color_p) {
   // Inform the graphics library that you are ready with the flushing.
   lv_disp_flush_ready(disp_drv);
 
-  unsigned long cost = micros() - start;
-  mp_printf(&mp_plat_print, "flush() cost %lu us.\n", cost);
+  // unsigned long cost = micros() - start;
+  // mp_printf(&mp_plat_print, "flush() cost %lu us.\n", cost);
 }
 }

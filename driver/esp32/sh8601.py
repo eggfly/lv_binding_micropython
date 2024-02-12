@@ -6,6 +6,7 @@ import micropython
 import time
 import uasyncio
 
+from ft3168 import ft3168
 from micropython import const
 
 micropython.alloc_emergency_exception_buf(256)
@@ -84,6 +85,9 @@ class SH8601:
 # start
 sh8601 = SH8601()
 esp.sh8601_brightness(64)
+
+tp = ft3168()
+tp.init_for_lvgl()
 
 scr = lv.obj()
 mystyle = lv.style_t()
